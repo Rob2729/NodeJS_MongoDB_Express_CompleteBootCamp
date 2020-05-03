@@ -1,4 +1,4 @@
 ##Useful Links
 
-https://github.com/jonasschmedtmann/complete-node-bootcamp
-http://codingheroes.io/resources/
+1. https://github.com/jonasschmedtmann/complete-node-bootcamp
+2. http://codingheroes.io/resources/
