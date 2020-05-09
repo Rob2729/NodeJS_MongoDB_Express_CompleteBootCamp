@@ -74,6 +74,14 @@ Uninstall package
 npm uninstall <packageName>
 ```
 
+## NPM Best Practice
+
+Do not share the node_modules folder, it is best practice to just leave that out becuase it can be easily recovered by using the following command aslong as the package.json and package-lock.json file exists in the repo.
+
+```
+npm install
+```
+
 ## About
 
 This bootcamp is to help build up knowledge and skills within the following areas: NodeJS, MongoDB and Express.
