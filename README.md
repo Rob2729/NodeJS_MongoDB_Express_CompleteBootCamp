@@ -26,6 +26,7 @@ Packages come in version that look like "1.5.31".
 
 - The ^ symbol before the version means it will check for all the minor versions when comparing to see if it is outdated.
 - The ~ symbol can be used to check for only newer patch versions.
+- The \* will check for all newer versions - however this could break your code due to new versions.
 
 ## NPM commands
 
@@ -65,6 +66,12 @@ Choose Version to install
 
 ```
 npm install <packageName>@<versionNumber>
+```
+
+Uninstall package
+
+```
+npm uninstall <packageName>
 ```
 
 ## About
