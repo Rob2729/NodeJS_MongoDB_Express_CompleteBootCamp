@@ -29,10 +29,43 @@ Packages come in version that look like "1.5.31".
 
 ## NPM commands
 
-Check for all outdated packages  
-<code>
+Install module dependency
+
+```
+npm install <packageName>
+or
+npm i <packageName>
+```
+
+Install dev-dependency
+
+```
+npm install <packageName> --save-dev
+```
+
+Install global dependency
+
+```
+npm i <packageName> --global
+```
+
+Check for all outdated packages
+
+```
 npm outdated
-</code>
+```
+
+Update Package
+
+```
+npm update <packageName>
+```
+
+Choose Version to install
+
+```
+npm install <packageName>@<versionNumber>
+```
 
 ## About
 
