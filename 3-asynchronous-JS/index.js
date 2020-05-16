@@ -36,6 +36,18 @@ const getDogPic = async () => {
     return '2 : READY 🐶';
 };
 
+//USES ASYNC AWAIT TO CALL THE FUNCTION.
+(async () => {
+    try {
+        console.log("1: Will get Dog Pics");
+        const x = await getDogPic();
+        console.log(x);
+        console.log("3: Done getting dog pics");
+    } catch (err) {
+        console.log("ERROR 💥");
+    }
+})
+
 /* THIS METHOD USES PROMISES TO CATCH THE ERRORS
 console.log("1: Will get Dog Pics");
 getDogPic().then(x => {
