@@ -124,6 +124,37 @@ const deleteTour = (req, res) => {
     });
 };
 
+const getAllUsers = (req, res) => {
+    return res.status(500).json({
+        status: 'Error',
+        message: 'Route Does not yet exist'
+    });
+};
+
+const getUser = (req, res) => {
+    return res.status(500).json({
+        status: 'Error'
+    });
+};
+
+const createUser = (req, res) => {
+    return res.status(500).json({
+        status: 'Error'
+    });
+};
+
+const updateUser = (req, res) => {
+    return res.status(500).json({
+        status: 'Error'
+    });
+};
+
+const deleteUser = (req, res) => {
+    return res.status(500).json({
+        status: 'Error'
+    });
+};
+
 //Get a list of all the tours
 //app.get('/api/v1/tours', getAllTours);
 
@@ -148,6 +179,9 @@ app
     .patch(updateTour)
     .delete(deleteTour);
 
+app.route('/api/v1/users').get(getAllUsers).post(createUser);
+
+app.route('/api/v1/users/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
 //Server Start Details
 const port = 3000;
