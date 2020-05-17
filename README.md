@@ -86,6 +86,12 @@ npm install
 
 This bootcamp is to help build up knowledge and skills within the following areas: NodeJS, MongoDB and Express.
 
+## EXPRESS
+
+Express is a routing and middleware web framework that has minimum functionality of it's own. 
+
+<i>Middleware</i> functions are functions that have access to the request object (req), the response(res), and the next middlewasre function in the application's request-response cycle. 
+
 ## Useful Links
 
 1. https://github.com/jonasschmedtmann/complete-node-bootcamp
