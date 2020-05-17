@@ -6,23 +6,14 @@ const express = require('express');
 const app = express();
 
 app.use(express.json());
-// app.get('/', (req, res) => {
-//     res.status(200).json({
-//         message: 'Hello from the server side',
-//         app: 'Natours'
-//     });
-// });
-
-// app.post('/', (req, res) => {
-//     res.status(200).send('You can post to this endpoint');
-// });
 
 const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+  fs.readFileSync(
+    `${__dirname}/dev-data/data/tours-simple.json`
+  )
 );
 
-//Get a list of all the tours
-app.get('/api/v1/tours', (req, res) => {
+const getAllTours = (req, res) => (req, res) => {
   res.status(200).json({
     status: 'Success',
     results: tours.length,
@@ -30,10 +21,9 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
-});
+};
 
-//GET a single tour.
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
   console.log(req.params);
   const id = req.params.id * 1;
   const tour = tours.find((el) => el.id === id);
@@ -53,10 +43,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
       tour,
     },
   });
-});
+};
 
-//Create a new tour
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
   console.log('Start of creating a tour');
 
   const newID = tours[tours.length - 1].id + 1;
@@ -72,7 +61,10 @@ app.post('/api/v1/tours', (req, res) => {
     `${__dirname}/dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
     (err) => {
-      if (err) console.log(`Something went wrong when writing to file`);
+      if (err)
+        console.log(
+          `Something went wrong when writing to file`
+        );
       res.status(201).json({
         message: 'Success',
         data: {
@@ -81,10 +73,9 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
-});
+};
 
-//PATCH - only requires the data that needs to be uploaded
-app.patch('/api/v1/tours/:id', (req, res) => {
+const updateTour = (req, res) => {
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
       status: 'fail',
@@ -98,10 +89,9 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       tour: '<Updated Tour Here>',
     },
   });
-});
+};
 
-//DELETE TOUR
-app.delete('/api/v1/tours/:id', (req, res) => {
+const deleteTour = (req, res) => {
   if (req.params.id * 1 > tours.length) {
     return res.status(404).json({
       status: 'fail',
@@ -113,7 +103,30 @@ app.delete('/api/v1/tours/:id', (req, res) => {
     status: 'Success',
     data: null,
   });
-});
+};
+
+//Get a list of all the tours
+//app.get('/api/v1/tours', getAllTours);
+
+//GET a single tour.
+//app.get('/api/v1/tours/:id', getTour);
+
+//Create a new tour
+//app.post('/api/v1/tours', createTour);
+
+//PATCH - only requires the data that needs to be uploaded
+//app.patch('/api/v1/tours/:id', updateTour);
+
+//DELETE TOUR
+//app.delete('/api/v1/tours/:id', deleteTour);
+
+app.route('/api/v1/').get(getAllTours).post(createTour);
+
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 const port = 3000;
 app.listen(port, () => {
