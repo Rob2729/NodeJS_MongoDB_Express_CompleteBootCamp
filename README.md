@@ -92,6 +92,17 @@ Express is a routing and middleware web framework that has minimum functionality
 
 <i>Middleware</i> functions are functions that have access to the request object (req), the response(res), and the next middlewasre function in the application's request-response cycle. 
 
+## Routing
+
+### Params
+
+We can add a parameter to the route by doing the following.
+
+* Mandatory Param : <i>:id</i>
+* Optional Param : <i>:id?</i>
+
+
+
 ## Useful Links
 
 1. https://github.com/jonasschmedtmann/complete-node-bootcamp
