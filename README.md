@@ -86,7 +86,7 @@ npm install
 
 This bootcamp is to help build up knowledge and skills within the following areas: NodeJS, MongoDB and Express.
 
-## EXPRESS
+## Express / Middleware
 
 Express is a routing and middleware web framework that has minimum functionality of it's own. 
 
