@@ -11,7 +11,9 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 //Middlewares
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
 app.use(express.json());
 
@@ -19,18 +21,16 @@ app.use(express.json());
 //we point to the folder and can display the files inside the folder
 app.use(express.static(`${__dirname}/public`));
 
-
 app.use((req, res, next) => {
-    console.log("Hello from the Middleware");
-    next();
+  console.log('Hello from the Middleware');
+  next();
 });
 
 app.use((req, res, next) => {
-    console.log("Hello from Middleware Stage 2");
-    req.requestTime = new Date().toISOString();
-    next();
+  console.log('Hello from Middleware Stage 2');
+  req.requestTime = new Date().toISOString();
+  next();
 });
-
 
 //Get a list of all the tours
 //app.get('/api/v1/tours', getAllTours);
@@ -48,8 +48,6 @@ app.use((req, res, next) => {
 //app.delete('/api/v1/tours/:id', deleteTour);
 
 //Routes
-
-
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
