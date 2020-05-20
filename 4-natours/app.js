@@ -15,6 +15,11 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 
+//express can also serve static files.
+//we point to the folder and can display the files inside the folder
+app.use(express.static(`${__dirname}/public`));
+
+
 app.use((req, res, next) => {
     console.log("Hello from the Middleware");
     next();
