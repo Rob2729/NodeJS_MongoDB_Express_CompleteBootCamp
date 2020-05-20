@@ -88,9 +88,9 @@ This bootcamp is to help build up knowledge and skills within the following area
 
 ## Express / Middleware
 
-Express is a routing and middleware web framework that has minimum functionality of it's own. 
+Express is a routing and middleware web framework that has minimum functionality of it's own.
 
-<i>Middleware</i> functions are functions that have access to the request object (req), the response(res), and the next middlewasre function in the application's request-response cycle. 
+<i>Middleware</i> functions are functions that have access to the request object (req), the response(res), and the next middlewasre function in the application's request-response cycle.
 
 ## Routing
 
@@ -98,13 +98,17 @@ Express is a routing and middleware web framework that has minimum functionality
 
 We can add a parameter to the route by doing the following.
 
-* Mandatory Param : <i>:id</i>
-* Optional Param : <i>:id?</i>
+- Mandatory Param : <i>:id</i>
+- Optional Param : <i>:id?</i>
 
+## eslint
 
+ESLint analyzes yout code to quickly find problems. It can be used to configure your text editor however you wise with settings files (e.g in 4-natuours folder).
+The website (find in useful links) will outline all of the settings that can be set.
 
 ## Useful Links
 
 1. https://github.com/jonasschmedtmann/complete-node-bootcamp
 2. http://codingheroes.io/resources/
 3. https://expressjs.com/
+4. https://eslint.org/
