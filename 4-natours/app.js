@@ -1,5 +1,4 @@
 //core modules go first
-const fs = require('fs');
 
 //node imprted modules
 const express = require('express');
@@ -50,8 +49,4 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
-//Server Start Details
-const port = 3000;
-app.listen(port, () => {
-    console.log(`The server is running on port ${port}`);
-});
+module.exports = app;
