@@ -12,7 +12,7 @@ const router = express.Router();
 
 //in the post example below we have chained middleware functions to the post, so we will always doa checkBody 
 //to validate the request.
-router.route('/').get(tourController.getAllTours).post(tourController.checkBody, tourController.createTour);
+router.route('/').get(tourController.getAllTours).post(tourController.createTour);
 
 router
     .route('/:id')
