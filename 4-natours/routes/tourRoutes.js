@@ -10,6 +10,8 @@ const router = express.Router();
 // req,res next, val (parameter value)
 //router.param('id', tourController.checkID);
 
+router.route('/top-5-cheap').get(tourController.aliasTopTours, tourController.getAllTours)
+
 //in the post example below we have chained middleware functions to the post, so we will always doa checkBody 
 //to validate the request.
 router.route('/').get(tourController.getAllTours).post(tourController.createTour);

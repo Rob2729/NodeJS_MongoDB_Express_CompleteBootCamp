@@ -18,10 +18,17 @@ const Tour = require('../models/tourModel');
 //     next();
 // };
 
+exports.aliasTopTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingAverage,price';
+    req.query.fields = 'name,price,ratingAverage,summary,difficulty';
+    next();
+};
+
 exports.getAllTours = async (req, res) => {
     try {
         //BUILD THE QUERY
-        //1. Filtering
+        //1A. Filtering
         const queryObject = {
             ...req.query
         };
@@ -30,21 +37,47 @@ exports.getAllTours = async (req, res) => {
         console.log(req.query);
 
 
-        //2. Advanced Filtering
+        //1B. Advanced Filtering
         let queryString = JSON.stringify(queryObject);
         queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
         console.log(JSON.parse(queryString));
 
-        const query = Tour.find(JSON.parse(queryString));
+        let query = Tour.find(JSON.parse(queryString));
 
+        //2. Sorting
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            query = query.sort(sortBy);
+        } else {
+            query = query.sort('-createdAt');
+        }
+
+        //3. FIELD LIMITING THE FIELDS BEING RETURNED
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ');
+            query = query.select(fields);
+        } else {
+            query = query.select('-__v');
+        }
+
+        //4. PAGINATION
+        const page = req.query.page * 1 || 1;
+        const limit = req.query.limit * 1 || 100;
+        const skip = (page - 1) * limit;
+
+        query = query.skip(skip).limit(limit);
+
+        if (req.query.page) {
+            const numberOfTours = await Tour.countDocuments();
+            if (skip >= numberOfTours) throw new Error('This page does not exist');
+        }
 
 
         //EXECUTE THE QUERY
         const tours = await query;
 
-        //const query = Tour.find().where('duration').equals(5).where('difficulty').equals('easy');
 
-        //3. SEND RESPONSE
+        //SEND RESPONSE
         res.status(200).json({
             status: 'Success',
             requestedAt: req.requestTime,
