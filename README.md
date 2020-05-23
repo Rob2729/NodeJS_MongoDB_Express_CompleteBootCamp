@@ -112,3 +112,4 @@ The website (find in useful links) will outline all of the settings that can be 
 2. http://codingheroes.io/resources/
 3. https://expressjs.com/
 4. https://eslint.org/
+5. https://mongoosejs.com/docs/api.html
