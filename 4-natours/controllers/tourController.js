@@ -20,25 +20,29 @@ const Tour = require('../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
     try {
-        //STEP 1 - BUILD THE QUERY
+        //BUILD THE QUERY
+        //1. Filtering
         const queryObject = {
             ...req.query
         };
         const excludedFields = ['page', 'sort', 'limit', 'fields'];
         excludedFields.forEach(el => delete queryObject[el]);
+        console.log(req.query);
+
+
+        //2. Advanced Filtering
+        let queryString = JSON.stringify(queryObject);
+        queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+        console.log(JSON.parse(queryString));
+
+        const query = Tour.find(JSON.parse(queryString));
 
 
 
-        console.log(req.query, queryObject);
-
-        //original way that we hvae done the query params.
-        const query = Tour.find(queryObject);
-
-        //const query = Tour.find().where('duration').equals(5).where('difficulty').equals('easy');
-
-        //2. EXECUTE THE QUERY
+        //EXECUTE THE QUERY
         const tours = await query;
 
+        //const query = Tour.find().where('duration').equals(5).where('difficulty').equals('easy');
 
         //3. SEND RESPONSE
         res.status(200).json({
