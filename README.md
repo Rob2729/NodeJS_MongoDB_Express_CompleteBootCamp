@@ -114,3 +114,5 @@ The website (find in useful links) will outline all of the settings that can be 
 4. https://eslint.org/
 5. https://mongoosejs.com/docs/api.html
 6. https://github.com/validatorjs/validator.js?files=1
+7. https://jwt.io/
+8. https://www.npmjs.com/package/jsonwebtoken
