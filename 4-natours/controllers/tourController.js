@@ -1,8 +1,7 @@
-/* eslint-disable node/no-unsupported-features/es-syntax */
 const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError.js')
+const AppError = require('../utils/appError.js');
 
 // const tours = JSON.parse(
 //     fs.readFileSync(
@@ -63,7 +62,6 @@ exports.getTour = catchAsync(async (req, res, next) => {
     },
   });
 });
-
 
 
 exports.createTour = catchAsync(async (req, res, next) => {

@@ -17,10 +17,16 @@ const userSchema = new mongoose.Schema({
     photo: {
         type: String
     },
+    role: {
+        type: String,
+        enum: ['user', 'guide', 'lead-guide', 'admin'],
+        default: 'user'
+    },
     password: {
         type: String,
         required: [true, 'Please provide a password'],
-        minLength: 8
+        minLength: 8,
+        select: false
     },
     passwordConfirm: {
         type: String,
@@ -32,6 +38,9 @@ const userSchema = new mongoose.Schema({
             },
             message: 'Passwords do not match'
         }
+    },
+    passwordChangedAt: {
+        type: Date
     }
 });
 
@@ -46,6 +55,24 @@ userSchema.pre('save', async function (next) {
     this.passwordConfirm = undefined;
     next();
 });
+
+//instance method, available on all docuemnts in a certain collections
+userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+    if (this.passwordChangedAt) {
+        const changedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        console.log(changedTimeStamp, JWTTimestamp);
+        return JWTTimestamp < changedTimeStamp;
+    }
+
+    // FALSE mean the password has not chagned - so it's less than the changed timestamp
+    return false;
+}
+
+
 
 const User = mongoose.model('User', userSchema);
 
