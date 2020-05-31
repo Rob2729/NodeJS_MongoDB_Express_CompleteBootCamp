@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -25,7 +26,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Please provide a password'],
-        minLength: 8,
+        minlength: 8,
         select: false
     },
     passwordConfirm: {
@@ -41,6 +42,17 @@ const userSchema = new mongoose.Schema({
     },
     passwordChangedAt: {
         type: Date
+    },
+    passwordResetToken: {
+        type: String
+    },
+    passwordResetExpires: {
+        type: Date
+    },
+    active: {
+        type: Boolean,
+        default: true,
+        select: false
     }
 });
 
@@ -56,6 +68,25 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password') || this.isNew) return next();
+
+    //the line below ensures that the token has been created after the password has changed. (SMALL HACKY way to get around an issue)
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+
+});
+
+userSchema.pre(/^find/, function (next) {
+    //This is query middleware, so this points to the current query.
+    this.find({
+        active: {
+            $ne: false
+        }
+    });
+    next();
+});
+
 //instance method, available on all docuemnts in a certain collections
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);
@@ -64,12 +95,28 @@ userSchema.methods.correctPassword = async function (candidatePassword, userPass
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     if (this.passwordChangedAt) {
         const changedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
-        console.log(changedTimeStamp, JWTTimestamp);
+
         return JWTTimestamp < changedTimeStamp;
     }
 
     // FALSE mean the password has not chagned - so it's less than the changed timestamp
     return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    console.log({
+            resetToken
+        },
+        this.passwordResetToken
+    );
+
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
 }
 
 

@@ -106,6 +106,15 @@ We can add a parameter to the route by doing the following.
 ESLint analyzes yout code to quickly find problems. It can be used to configure your text editor however you wise with settings files (e.g in 4-natuours folder).
 The website (find in useful links) will outline all of the settings that can be set.
 
+## Sending Emails
+
+we should avoid using gmail where possible as there is a limit of 500 emails per day. and this could result in being listed as a spam.
+
+some alternatives are:
+
+1. sendgrid
+2. mailgun
+
 ## Useful Links
 
 1. https://github.com/jonasschmedtmann/complete-node-bootcamp
@@ -116,3 +125,4 @@ The website (find in useful links) will outline all of the settings that can be 
 6. https://github.com/validatorjs/validator.js?files=1
 7. https://jwt.io/
 8. https://www.npmjs.com/package/jsonwebtoken
+9. https://mailtrap.io
