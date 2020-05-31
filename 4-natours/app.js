@@ -4,6 +4,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 //require the appError class
 const AppError = require('./utils/appError');
@@ -16,10 +17,16 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 //GLOBAL Middlewares
+
+//Set security HTTP headers
+app.use(helmet());
+
+//Development Logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+//Limit Requests from same IP
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -28,12 +35,19 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
-app.use(express.json());
+//Body Parser, reading data from the body into req.body
+app.use(
+  express.json({
+    limit: '10kb',
+  })
+);
 
+//Serving Static Files
 //express can also serve static files.
 //we point to the folder and can display the files inside the folder
 app.use(express.static(`${__dirname}/public`));
 
+//Test Middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   console.log(req.headers);
