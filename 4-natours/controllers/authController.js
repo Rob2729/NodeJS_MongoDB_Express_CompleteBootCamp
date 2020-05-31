@@ -1,7 +1,5 @@
 const crypto = require('crypto');
-const {
-  promisify
-} = require('util');
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
@@ -9,10 +7,12 @@ const AppError = require('../utils/appError.js');
 const SendEmail = require('../utils/email.js');
 
 const signToken = (id) => {
-  return jwt.sign({
+  return jwt.sign(
+    {
       id: id,
     },
-    process.env.JWT_SECRET, {
+    process.env.JWT_SECRET,
+    {
       expiresIn: process.env.JWT_EXPIRY,
     }
   );
@@ -20,15 +20,28 @@ const signToken = (id) => {
 
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  res.cookie('jwt', token, cookieOptions);
+
+  //Remove the password from the output when signing up
+  //DOES NOT remove it from the db.
+  user.password = undefined;
 
   res.status(statusCode).json({
     status: 'success',
     token,
     date: {
-      user
-    }
+      user,
+    },
   });
-}
+};
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
@@ -41,14 +54,10 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   createAndSendToken(newUser, 201, res);
-
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const {
-    email,
-    password
-  } = req.body;
+  const { email, password } = req.body;
 
   // 1. Check if the email and password exists
   if (!email || !password) {
@@ -158,7 +167,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({
-      validateBeforeSave: false
+      validateBeforeSave: false,
     });
 
     return next(
@@ -177,7 +186,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: {
-      $gt: Date.now()
+      $gt: Date.now(),
     },
   });
 
@@ -208,7 +217,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     return next(new AppError('Your current password is wrong', 401));
   }
 
-
   // 3) if the password is correct then update the password.
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
@@ -217,6 +225,4 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   // 4) Log user in, send new JWT.
   createAndSendToken(user, 200, res);
-
-
 });
