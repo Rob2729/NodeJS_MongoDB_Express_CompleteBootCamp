@@ -5,6 +5,9 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
 //require the appError class
 const AppError = require('./utils/appError');
@@ -13,6 +16,7 @@ const globalErrorHandler = require('./controllers/errorController');
 //point to the routers
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
@@ -39,6 +43,30 @@ app.use('/api', limiter);
 app.use(
   express.json({
     limit: '10kb',
+  })
+);
+
+// Data Santization against NoSQL Query injection
+//will need to use in all apps to avoid attacks
+app.use(mongoSanitize());
+
+// Data Santization against XSS Attacks
+// will clean malicious html and javascript code.
+app.use(xss());
+
+// Prevents Parameter Pollution
+// This is when we receive multiple of the same paramter, the code will make this into an array and then fail.
+// We can add whitelist parameters to make sure we can have multiple queries on some parameters
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
   })
 );
 
@@ -73,6 +101,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 //WE CAN ADD MIDDLEWARE AFTER THE ROUTERS TO CATCH ANY ROUTE EXCEPTIONS
 app.all('*', (req, res, next) => {

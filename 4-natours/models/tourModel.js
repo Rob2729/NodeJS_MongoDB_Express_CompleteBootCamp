@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+// const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema({
   name: {
@@ -79,6 +80,32 @@ const tourSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  startLocation: {
+    //GeoJSON is used to specify geo json data 
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point']
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+  },
+  locations: [{
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point']
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+    day: Number
+  }],
+  guides: [{
+    type: mongoose.Schema.ObjectId,
+    ref: 'User' //* having this here means you don't need to import the model.
+  }]
 }, {
   toJSON: {
     virtuals: true,
@@ -92,6 +119,14 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// * Virtual Populate 
+// * with the virtual populate we need to point to the foreign field (reviews model, with the field that contains the id, and the localField)
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id'
+});
+
 //DOCUMENT MIDDLEWARE: runs before the .save() and .create()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, {
@@ -99,6 +134,16 @@ tourSchema.pre('save', function (next) {
   });
   next();
 });
+
+//
+// * THIS CODE WILL SHOW THE EMBEDDING METHOD OF HANDLING DOCUMENTS.
+//
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async id =>
+//     await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
 
 // tourSchema.pre('save', function (next) {
 //   console.log('Will save document...');
@@ -125,6 +170,14 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.post(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds`);
   //   console.log(docs);
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: "-__v -passwordChangedAt"
+  });
   next();
 });
 
