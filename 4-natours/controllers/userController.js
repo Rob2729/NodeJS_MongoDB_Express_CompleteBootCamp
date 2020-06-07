@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError.js');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
     const newObj = {};
@@ -11,20 +12,20 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 
+exports.getAllUsers = factory.getAll(User);
+// exports.getAllUsers = catchAsync(async (req, res, next) => {
+//     const users = await User.find();
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find();
-
-    //SEND RESPONSE
-    res.status(200).json({
-        status: 'Success',
-        requestedAt: req.requestTime,
-        results: users.length,
-        data: {
-            users,
-        },
-    });
-});
+//     //SEND RESPONSE
+//     res.status(200).json({
+//         status: 'Success',
+//         requestedAt: req.requestTime,
+//         results: users.length,
+//         data: {
+//             users,
+//         },
+//     });
+// });
 
 exports.updateMe = async (req, res, next) => {
     // 1) create an error if user tried to update password.
@@ -63,30 +64,35 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     });
 });
 
-exports.getUser = (req, res) => {
-    return res.status(500).json({
-        status: 'Error',
-        message: 'Route Does not yet exist'
-    });
-};
+// exports.getUser = (req, res) => {
+//     return res.status(500).json({
+//         status: 'Error',
+//         message: 'Route Does not yet exist'
+//     });
+// };
+
+exports.getUser = factory.getOne(User);
 
 exports.createUser = (req, res) => {
     return res.status(500).json({
         status: 'Error',
-        message: 'Route Does not yet exist'
+        message: 'Route Dwill never be defined! please use sign up'
     });
 };
 
-exports.updateUser = (req, res) => {
-    return res.status(500).json({
-        status: 'Error',
-        message: 'Route Does not yet exist'
-    });
-};
+// exports.updateUser = (req, res) => {
+//     return res.status(500).json({
+//         status: 'Error',
+//         message: 'Route Does not yet exist'
+//     });
+// };
 
-exports.deleteUser = (req, res) => {
-    return res.status(500).json({
-        status: 'Error',
-        message: 'Route Does not yet exist'
-    });
-};
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
+
+// exports.deleteUser = (req, res) => {
+//     return res.status(500).json({
+//         status: 'Error',
+//         message: 'Route Does not yet exist'
+//     });
+// };
