@@ -27,6 +27,11 @@ exports.getAllUsers = factory.getAll(User);
 //     });
 // });
 
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+};
+
 exports.updateMe = async (req, res, next) => {
     // 1) create an error if user tried to update password.
     if (req.body.password || req.body.passwordConfirm) {
