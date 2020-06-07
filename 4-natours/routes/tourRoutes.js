@@ -1,7 +1,7 @@
 const express = require('express');
 const tourController = require('../controllers/tourController');
 const authController = require('../controllers/authController');
-const reviewController = require('../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
 
@@ -9,6 +9,10 @@ const router = express.Router();
 //we get access to 4 variables for param middleware
 // req,res next, val (parameter value)
 //router.param('id', tourController.checkID);
+
+// * we have nested this route so that it will create a review while using the tested route.
+// * /api/v1/tour/:tourID/reviews  - will create a review for a specific tour
+router.use('/:tourId/reviews', reviewRouter);
 
 router.route('/top-5-cheap').get(tourController.aliasTopTours, tourController.getAllTours);
 
@@ -25,6 +29,5 @@ router
   .patch(tourController.updateTour)
   .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
-router.route('/:tourId/reviews').post(authController.protect, authController.restrictTo('user'), reviewController.createReview);
 
 module.exports = router;
